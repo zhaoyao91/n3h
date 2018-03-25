@@ -5,7 +5,7 @@ Options ~ {
   natsEx: NatsEx,
   flowName: String,
   stepName: String,
-  followStep?: String,
+  follow?: String, // step message to follow, such as $otherStep.ok or $otherStep.failed,
   validator?: (data) => data,
   handler: Handler
 }
@@ -26,15 +26,15 @@ module.exports = function (options) {
     natsEx,
     flowName,
     stepName,
-    followStep,
+    follow,
     validator,
     handler,
   } = options
 
   const name = `flow.${flowName}.${stepName}`
 
-  const topic = followStep
-    ? `flow.${flowName}.${followStep}`
+  const topic = follow
+    ? `flow.${flowName}.${follow}`
     : name
 
   const wrapperHandler = async (data, message, receivedTopic) => {

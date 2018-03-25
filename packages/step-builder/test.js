@@ -55,7 +55,7 @@ describe('step-builder', () => {
     holder.load(itemDefs)
   })
 
-  test('option.followStep', (done) => {
+  test('option.follow', (done) => {
     const itemDefs = [
       natsExItem,
       {
@@ -65,7 +65,7 @@ describe('step-builder', () => {
           natsEx,
           flowName: 'test-flow',
           stepName: 'test-step',
-          followStep: 'some-step.ok',
+          follow: 'some-step.ok',
           handler () {
             this.emit.ok('Hello World')
           }
@@ -214,7 +214,7 @@ describe('step-builder', () => {
             natsEx,
             flowName: 'test-flow',
             stepName: 'test-step',
-            followStep: 'some-step.ok',
+            follow: 'some-step.ok',
             handler () {
               count.a++
             }
@@ -223,7 +223,7 @@ describe('step-builder', () => {
             natsEx,
             flowName: 'test-flow',
             stepName: 'test-step',
-            followStep: 'some-step.ok',
+            follow: 'some-step.ok',
             handler () {
               count.a++
             }
@@ -232,7 +232,7 @@ describe('step-builder', () => {
             natsEx,
             flowName: 'test-flow',
             stepName: 'test-step2',
-            followStep: 'some-step.ok',
+            follow: 'some-step.ok',
             handler () {
               count.b++
             }

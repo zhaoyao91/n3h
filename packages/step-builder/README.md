@@ -23,7 +23,7 @@ Options ~ {
   natsEx: NatsEx,
   flowName: String,
   stepName: String,
-  followStep?: String,
+  follow?: String, // step message to follow, such as $otherStep.ok or $otherStep.failed,
   validator?: (data) => data,
   handler: Handler
 }
