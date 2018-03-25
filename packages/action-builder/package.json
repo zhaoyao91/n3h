@@ -1,6 +1,6 @@
 {
   "name": "n3h-action-builder",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Help build action messager.",
   "main": "index.js",
   "scripts": {
@@ -14,14 +14,16 @@
   "repository": "https://github.com/zhaoyao91/n3h",
   "license": "MIT",
   "peerDependencies": {
-    "nats-ex": "^0.3.1",
-    "the-holder": "^1.0.1"
+    "nats-ex": "^1.0.0",
+    "the-holder": "^1.0.0"
   },
   "devDependencies": {
     "@types/jest": "^22.2.2",
     "jest": "^22.4.3",
-    "nats-ex": "^0.3.1",
+    "joi": "^13.1.2",
+    "n3h-joi-validator": "^1.0.0",
+    "nats-ex": "^1.0.0",
     "sleep-promise": "^2.0.0",
-    "the-holder": "^1.0.1"
+    "the-holder": "^1.0.0"
   }
 }

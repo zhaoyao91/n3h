@@ -30,3 +30,7 @@ HandlerThis ~ {
   emit: (case, data?) => messageId
 }
 ```
+
+## License
+
+MIT

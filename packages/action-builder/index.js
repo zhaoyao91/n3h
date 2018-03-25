@@ -28,11 +28,9 @@ module.exports = function (options) {
     const handlerThis = {
       emit: (_case, data) => message.emit(`${fullName}.${_case}`, data)
     }
+    data = validator ? validator(data) : data
     return handler.call(handlerThis, data, message, receivedTopic)
   }
 
-  natsEx.on(fullName, wrapperHandler, {
-    queue: fullName,
-    validator,
-  })
+  natsEx.on(fullName, wrapperHandler, {queue: fullName})
 }

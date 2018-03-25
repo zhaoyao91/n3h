@@ -1,6 +1,7 @@
 const Holder = require('the-holder')
 const buildAction = require('./index')
-const sleep = require('sleep-promise')
+const buildValidator = require('n3h-joi-validator')
+const Joi = require('joi')
 const {connect} = require('nats-ex')
 
 const natsExItem = {
@@ -151,12 +152,7 @@ describe('action-builder', () => {
   })
 
   describe('validation', () => {
-    const validator = (data) => {
-      if (typeof data !== 'string') {
-        throw new TypeError('invalid data')
-      }
-      return data
-    }
+    const validator = buildValidator(Joi.string().required())
 
     test('validation ok', async () => {
       const itemDefs = [
@@ -208,7 +204,7 @@ describe('action-builder', () => {
               await natsEx.call('action.echo', 123)
             }
             catch (err) {
-              expect(err.message).toBe('invalid data')
+              expect(err.message).toBe('"value" must be a string')
             }
           }
         }

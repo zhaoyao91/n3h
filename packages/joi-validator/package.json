@@ -1,0 +1,16 @@
+{
+  "name": "n3h-joi-validator",
+  "version": "1.0.0",
+  "description": "validate message data using joi",
+  "main": "index.js",
+  "keywords": [
+    "n3h",
+    "joi",
+    "validator"
+  ],
+  "author": "zhaoyao91 <zhaoyao91@163.com>",
+  "license": "MIT",
+  "peerDependencies": {
+    "joi": "^13.0.0"
+  }
+}
