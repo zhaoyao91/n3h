@@ -9,6 +9,7 @@
     "validator"
   ],
   "author": "zhaoyao91 <zhaoyao91@163.com>",
+  "repository": "https://github.com/zhaoyao91/n3h",
   "license": "MIT",
   "peerDependencies": {
     "joi": "^13.0.0"

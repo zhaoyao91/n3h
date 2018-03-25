@@ -4,11 +4,11 @@ Tools for N3H architecture.
 
 See [packages](./packages).
 
-## Architecture
+## Based on
 
 - [NN Architecture](https://www.jianshu.com/p/5fd17296c97f)
-- [NATS-EX message broker](https://github.com/zhaoyao91/nats-ex/tree/master/packages/nats-ex)
-- [The Holder Framework](https://github.com/zhaoyao91/the-holder)
+- [NATS-EX v1](https://github.com/zhaoyao91/nats-ex/tree/master/packages/nats-ex)
+- [The Holder v1](https://github.com/zhaoyao91/the-holder)
 
 ## License
 
