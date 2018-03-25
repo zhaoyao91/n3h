@@ -118,7 +118,7 @@ describe('action-builder', () => {
   })
 
   test('error', async () => {
-    expect.assertions(3)
+    expect.assertions(2)
     const echoData = 'Hello'
     const itemDefs = [
       natsExItem,
@@ -138,9 +138,6 @@ describe('action-builder', () => {
         name: 'test',
         need: ['natsEx', 'action'],
         build: async ({natsEx}) => {
-          natsEx.on('action.echo.error', (data) => {
-            expect(data).toBe(echoData)
-          })
           try {
             await natsEx.call('action.echo', echoData)
           }

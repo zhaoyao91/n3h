@@ -28,16 +28,11 @@ module.exports = function (options) {
     const handlerThis = {
       emit: (_case, data) => message.emit(`${fullName}.${_case}`, data)
     }
-    try {
-      // validate data here instead of relying on natsEx to catch the validation error
-      data = validator ? validator(data) : data
-      return await handler.call(handlerThis, data, message, receivedTopic)
-    }
-    catch (err) {
-      message.emit(`${fullName}.error`, data)
-      throw err
-    }
+    return handler.call(handlerThis, data, message, receivedTopic)
   }
 
-  natsEx.on(fullName, wrapperHandler, {queue: fullName})
+  natsEx.on(fullName, wrapperHandler, {
+    queue: fullName,
+    validator,
+  })
 }

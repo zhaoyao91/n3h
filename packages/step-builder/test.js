@@ -123,7 +123,7 @@ describe('step-builder', () => {
     })
 
     test('validation failed', async () => {
-      expect.assertions(2)
+      expect.assertions(1)
       const itemDefs = [
         natsExItem,
         {
@@ -143,9 +143,6 @@ describe('step-builder', () => {
           name: 'test',
           need: ['natsEx', 'step'],
           build: async ({natsEx}) => {
-            natsEx.on('flow.test-flow.test-step.error', (data) => {
-              expect(data).toBe(100)
-            })
             try {
               await natsEx.call('flow.test-flow.test-step', 100)
             }

@@ -8,10 +8,9 @@ Help build flow step messager.
 - for the entry step, subscribe the topic of its name
 - for other steps, subscribe the topics it follows
 - for all subscriptions, use its name as queue group name
-- the topics a step emits are classified into 3 categories:
-  - `$name.ok(.*)?` - for succeeded business logic
-  - `$name.failed(.*)?` - failed - for known failed business logic
-  - `$name.error` - for failed business logic which are caused by unknown errors
+- the topics a step emits are classified into 2 categories:
+  - `$name.ok(.*)?`
+  - `$name.failed(.*)?`
   
 ## API
 
