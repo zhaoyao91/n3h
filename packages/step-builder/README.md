@@ -39,3 +39,7 @@ HandlerThis ~ {
   }
 }
 ```
+
+## License
+
+MIT

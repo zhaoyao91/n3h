@@ -46,11 +46,9 @@ module.exports = function (options) {
         failedCase: (_case, data) => message.emit(`${name}.failed.${_case}`, data),
       }
     }
+    data = validator ? validator(data) : data
     await handler.call(handlerThis, data, message, receivedTopic)
   }
 
-  natsEx.on(topic, wrapperHandler, {
-    queue: name,
-    validator,
-  })
+  natsEx.on(topic, wrapperHandler, {queue: name})
 }
