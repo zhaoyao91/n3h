@@ -1,7 +1,18 @@
 const Holder = require('the-holder')
-const {buildStep} = require('../index')
+const buildStep = require('./index')
 const sleep = require('sleep-promise')
-const natsExItem = require('./lib/items/nats-ex')
+const {connect} = require('nats-ex')
+
+const natsExItem = {
+  name: 'natsEx',
+  build: async () => {
+    const natsEx = await connect()
+    return {
+      item: natsEx,
+      stop: () => natsEx.close()
+    }
+  }
+}
 
 describe('step-builder', () => {
   let holder = null
@@ -24,8 +35,8 @@ describe('step-builder', () => {
           natsEx,
           flowName: 'test-flow',
           stepName: 'test-step',
-          handler: (emitter) => {
-            emitter.ok('Hello World')
+          handler () {
+            this.emit.ok('Hello World')
           }
         })
       },
@@ -55,8 +66,8 @@ describe('step-builder', () => {
           flowName: 'test-flow',
           stepName: 'test-step',
           followStep: 'some-step.ok',
-          handler: (emitter) => {
-            emitter.ok('Hello World')
+          handler () {
+            this.emit.ok('Hello World')
           }
         })
       },
@@ -94,7 +105,7 @@ describe('step-builder', () => {
             flowName: 'test-flow',
             stepName: 'test-step',
             validator: testValidator,
-            handler: (emitter, data) => {
+            handler (data) {
               expect(typeof data).toBe('number')
               done()
             }
@@ -123,7 +134,7 @@ describe('step-builder', () => {
             flowName: 'test-flow',
             stepName: 'test-step',
             validator: testValidator,
-            handler: (emitter, data) => {
+            handler (data) {
               return data
             }
           })
@@ -159,11 +170,11 @@ describe('step-builder', () => {
           natsEx,
           flowName: 'test-flow',
           stepName: 'test-step',
-          handler: (emitter) => {
-            emitter.ok('ok')
-            emitter.okCase('well', 'ok well')
-            emitter.failed('failed')
-            emitter.failedCase('bad', 'failed bad')
+          handler () {
+            this.emit.ok('ok')
+            this.emit.okCase('well', 'ok well')
+            this.emit.failed('failed')
+            this.emit.failedCase('bad', 'failed bad')
           }
         })
       },
@@ -191,7 +202,7 @@ describe('step-builder', () => {
     await sleep(50)
   })
 
-  test('basic step', async () => {
+  test('queue group', async () => {
     const count = {
       a: 0,
       b: 0,
@@ -207,7 +218,7 @@ describe('step-builder', () => {
             flowName: 'test-flow',
             stepName: 'test-step',
             followStep: 'some-step.ok',
-            handler: () => {
+            handler () {
               count.a++
             }
           })
@@ -216,7 +227,7 @@ describe('step-builder', () => {
             flowName: 'test-flow',
             stepName: 'test-step',
             followStep: 'some-step.ok',
-            handler: () => {
+            handler () {
               count.a++
             }
           })
@@ -225,7 +236,7 @@ describe('step-builder', () => {
             flowName: 'test-flow',
             stepName: 'test-step2',
             followStep: 'some-step.ok',
-            handler: () => {
+            handler () {
               count.b++
             }
           })

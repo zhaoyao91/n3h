@@ -1,22 +1,5 @@
 {
-  "name": "n3h",
-  "version": "0.0.0",
-  "description": "Tools for N3H architecture.",
-  "keywords": [
-    "nn",
-    "nats-ex",
-    "the-holder"
-  ],
-  "scripts": {
-    "test": "jest"
-  },
-  "author": "zhaoyao91 <zhaoyao91@163.com>",
-  "license": "MIT",
   "devDependencies": {
-    "@types/jest": "^22.2.2",
-    "jest": "^22.4.3",
-    "nats-ex": "^0.3.1",
-    "sleep-promise": "^2.0.0",
-    "the-holder": "^1.0.1"
+    "lerna": "^2.9.0"
   }
 }

@@ -7,14 +7,18 @@ Options ~ {
   stepName: String,
   followStep?: String,
   validator?: (data) => data,
-  handler: (Emitter, data, message, receivedTopic) => Promise => Void
+  handler: Handler
 }
 
-Emitter ~ {
-  ok: (data?) => messageId,
-  okCase: (case: String, data?) => messageId,
-  failed: (data?) => messageId,
-  failedCase: (case: String, data?) => messageId,
+Handler ~ (data, message, receivedTopic): HandlerThis => Promise => Void
+
+HandlerThis ~ {
+  emit: {
+    ok: (data?) => messageId,
+    okCase: (case: String, data?) => messageId,
+    failed: (data?) => messageId,
+    failedCase: (case: String, data?) => messageId,
+  }
 }
  */
 module.exports = function (options) {
@@ -34,16 +38,18 @@ module.exports = function (options) {
     : name
 
   const wrapperHandler = async (data, message, receivedTopic) => {
-    const emitter = {
-      ok: (data) => message.emit(`${name}.ok`, data),
-      okCase: (_case, data) => message.emit(`${name}.ok.${_case}`, data),
-      failed: (data) => message.emit(`${name}.failed`, data),
-      failedCase: (_case, data) => message.emit(`${name}.failed.${_case}`, data),
+    const handlerThis = {
+      emit: {
+        ok: (data) => message.emit(`${name}.ok`, data),
+        okCase: (_case, data) => message.emit(`${name}.ok.${_case}`, data),
+        failed: (data) => message.emit(`${name}.failed`, data),
+        failedCase: (_case, data) => message.emit(`${name}.failed.${_case}`, data),
+      }
     }
     try {
       // validate data here instead of relying on natsEx to catch the validation error
       data = validator ? validator(data) : data
-      await handler(emitter, data, message, receivedTopic)
+      await handler.call(handlerThis, data, message, receivedTopic)
     }
     catch (err) {
       message.emit(`${name}.error`, data)

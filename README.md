@@ -10,7 +10,9 @@ Tools for N3H Architecture.
 
 ## Tools
 
-- [buildStep](./lib/step-builder) - help build flow step messager
+- [buildStep](packages/step-builder) - help build flow step messager
+- [buildAction](packages/action-builder) - help build action messager
+- [buildConnector](packages/connector-builder) - help build connector messager
 
 ## License
 

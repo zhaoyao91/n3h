@@ -13,3 +13,24 @@ Help build action messager.
   - it will try to return the error back to the caller
   - it will try to emit an error message to the system with topic `$name.error` with the input data (well, this is 
   actually a default side effect for all actions) 
+
+## API
+
+### buildAction
+
+```
+(Options) => Void
+
+Options ~ {
+  natsEx: NatsEx,
+  name,
+  validator?: (data) => data,
+  handler: Handler
+}
+
+Handler ~ (data, message, receivedTopic): HandlerThis => Promise => Any
+
+HandlerThis ~ {
+  emit: (case, data?) => messageId
+}
+```

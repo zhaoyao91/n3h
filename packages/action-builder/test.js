@@ -1,6 +1,18 @@
 const Holder = require('the-holder')
-const {buildAction} = require('../index')
-const natsExItem = require('./lib/items/nats-ex')
+const buildAction = require('./index')
+const sleep = require('sleep-promise')
+const {connect} = require('nats-ex')
+
+const natsExItem = {
+  name: 'natsEx',
+  build: async () => {
+    const natsEx = await connect()
+    return {
+      item: natsEx,
+      stop: () => natsEx.close()
+    }
+  }
+}
 
 describe('action-builder', () => {
   let holder = null
@@ -22,7 +34,7 @@ describe('action-builder', () => {
         build: ({natsEx}) => buildAction({
           natsEx,
           name: 'ping',
-          handler: () => {
+          handler () {
             return 'pong'
           }
         })
@@ -50,14 +62,14 @@ describe('action-builder', () => {
           buildAction({
             natsEx,
             name: 'ping',
-            handler: () => {
+            handler () {
               expect(true).toBe(true)
             }
           })
           buildAction({
             natsEx,
             name: 'ping',
-            handler: () => {
+            handler () {
               expect(true).toBe(true)
             }
           })
@@ -84,8 +96,8 @@ describe('action-builder', () => {
         build: ({natsEx}) => buildAction({
           natsEx,
           name: 'ping',
-          handler: (emit) => {
-            emit('i-am-ok', 'well')
+          handler () {
+            this.emit('i-am-ok', 'well')
             return 'pong'
           }
         })
@@ -105,7 +117,7 @@ describe('action-builder', () => {
     await holder.load(itemDefs)
   })
 
-  test('side effect', async () => {
+  test('error', async () => {
     expect.assertions(3)
     const echoData = 'Hello'
     const itemDefs = [
@@ -116,7 +128,7 @@ describe('action-builder', () => {
         build: ({natsEx}) => buildAction({
           natsEx,
           name: 'echo',
-          handler: (emit, data) => {
+          handler (data) {
             expect(data).toBe(echoData)
             throw new Error('something wrong')
           }
@@ -159,7 +171,7 @@ describe('action-builder', () => {
             natsEx,
             name: 'echo',
             validator,
-            handler: (emit, data) => {
+            handler (data) {
               return data
             }
           })
@@ -186,7 +198,7 @@ describe('action-builder', () => {
             natsEx,
             name: 'echo',
             validator,
-            handler: (emit, data) => {
+            handler (data) {
               return data
             }
           })

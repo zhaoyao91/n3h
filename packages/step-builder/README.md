@@ -26,13 +26,17 @@ Options ~ {
   stepName: String,
   followStep?: String,
   validator?: (data) => data,
-  handler: (Emitter, data, message, receivedTopic) => Promise => Void
+  handler: Handler
 }
 
-Emitter ~ {
-  ok: (data?) => Void,
-  okCase: (case: String, data?) => Void,
-  failed: (data?) => Void,
-  failedCase: (case: String, data?) => Void,
+Handler ~ (data, message, receivedTopic): HandlerThis => Promise => Void
+
+HandlerThis ~ {
+  emit: {
+    ok: (data?) => messageId,
+    okCase: (case: String, data?) => messageId,
+    failed: (data?) => messageId,
+    failedCase: (case: String, data?) => messageId,
+  }
 }
 ```

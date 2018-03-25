@@ -5,10 +5,14 @@ Options ~ {
   natsEx: NatsEx,
   name,
   validator?: (data) => data,
-  handler: (Emitter, data, message, receivedTopic) => Promise => Any
+  handler: Handler
 }
 
-Emitter ~ (effect, data?) => messageId
+Handler ~ (data, message, receivedTopic): HandlerThis => Promise => Any
+
+HandlerThis ~ {
+  emit: (case, data?) => messageId
+}
  */
 module.exports = function (options) {
   const {
@@ -21,11 +25,13 @@ module.exports = function (options) {
   const fullName = `action.${name}`
 
   const wrapperHandler = async (data, message, receivedTopic) => {
-    const emitter = (effect, data) => message.emit(`${fullName}.${effect}`, data)
+    const handlerThis = {
+      emit: (_case, data) => message.emit(`${fullName}.${_case}`, data)
+    }
     try {
       // validate data here instead of relying on natsEx to catch the validation error
       data = validator ? validator(data) : data
-      return await handler(emitter, data, message, receivedTopic)
+      return await handler.call(handlerThis, data, message, receivedTopic)
     }
     catch (err) {
       message.emit(`${fullName}.error`, data)
