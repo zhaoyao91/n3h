@@ -3,9 +3,13 @@
 
 Options ~ {
   natsEx: NatsEx,
+  serviceName?: String,
   flowName: String,
   stepName: String,
-  follow?: String, // step message to follow, such as $otherStep.ok or $otherStep.failed,
+  follow?: {
+    step: String,
+    case: String,
+  },
   validator?: (data) => data,
   handler: Handler
 }
@@ -24,6 +28,7 @@ HandlerThis ~ {
 module.exports = function (options) {
   const {
     natsEx,
+    serviceName,
     flowName,
     stepName,
     follow,
@@ -31,24 +36,24 @@ module.exports = function (options) {
     handler,
   } = options
 
-  const name = `flow.${flowName}.${stepName}`
+  const fullName = ['flow', serviceName, flowName, stepName].filter(x => !!x).join('.')
 
   const topic = follow
-    ? `flow.${flowName}.${follow}`
-    : name
+    ? ['flow', serviceName, flowName, follow.step, follow.case].filter(x => !!x).join('.')
+    : fullName
 
   const wrapperHandler = async (data, message, receivedTopic) => {
     const handlerThis = {
       emit: {
-        ok: (data) => message.emit(`${name}.ok`, data),
-        okCase: (_case, data) => message.emit(`${name}.ok.${_case}`, data),
-        failed: (data) => message.emit(`${name}.failed`, data),
-        failedCase: (_case, data) => message.emit(`${name}.failed.${_case}`, data),
+        ok: (data) => message.emit(`${fullName}.ok`, data),
+        okCase: (_case, data) => message.emit(`${fullName}.ok.${_case}`, data),
+        failed: (data) => message.emit(`${fullName}.failed`, data),
+        failedCase: (_case, data) => message.emit(`${fullName}.failed.${_case}`, data),
       }
     }
     data = validator ? validator(data) : data
     await handler.call(handlerThis, data, message, receivedTopic)
   }
 
-  natsEx.on(topic, wrapperHandler, {queue: name})
+  natsEx.on(topic, wrapperHandler, {queue: fullName})
 }

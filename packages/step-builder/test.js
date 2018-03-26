@@ -33,8 +33,9 @@ describe('step-builder', () => {
         need: 'natsEx',
         build: ({natsEx}) => buildStep({
           natsEx,
-          flowName: 'test-flow',
-          stepName: 'test-step',
+          serviceName: 'test',
+          flowName: 'flow',
+          stepName: 'step',
           handler () {
             this.emit.ok('Hello World')
           }
@@ -44,11 +45,11 @@ describe('step-builder', () => {
         name: 'test',
         need: ['natsEx', 'step'],
         build: async ({natsEx}) => {
-          natsEx.on('flow.test-flow.test-step.ok', (data) => {
+          natsEx.on('flow.test.flow.step.ok', (data) => {
             expect(data).toBe('Hello World')
             done()
           })
-          natsEx.emit('flow.test-flow.test-step')
+          natsEx.emit('flow.test.flow.step')
         }
       }
     ]
@@ -65,7 +66,10 @@ describe('step-builder', () => {
           natsEx,
           flowName: 'test-flow',
           stepName: 'test-step',
-          follow: 'some-step.ok',
+          follow: {
+            step: 'some-step',
+            case: 'ok'
+          },
           handler () {
             this.emit.ok('Hello World')
           }
@@ -214,7 +218,10 @@ describe('step-builder', () => {
             natsEx,
             flowName: 'test-flow',
             stepName: 'test-step',
-            follow: 'some-step.ok',
+            follow: {
+              step: 'some-step',
+              case: 'ok'
+            },
             handler () {
               count.a++
             }
@@ -223,7 +230,10 @@ describe('step-builder', () => {
             natsEx,
             flowName: 'test-flow',
             stepName: 'test-step',
-            follow: 'some-step.ok',
+            follow: {
+              step: 'some-step',
+              case: 'ok'
+            },
             handler () {
               count.a++
             }
@@ -232,7 +242,10 @@ describe('step-builder', () => {
             natsEx,
             flowName: 'test-flow',
             stepName: 'test-step2',
-            follow: 'some-step.ok',
+            follow: {
+              step: 'some-step',
+              case: 'ok'
+            },
             handler () {
               count.b++
             }

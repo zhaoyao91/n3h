@@ -4,13 +4,13 @@ Help build flow step messager.
 
 ## Conventions for Flow Step
 
-- each step has a name prefixed with 'flow' and flow name, such as `flow.$flow.$step`
-- for the entry step, subscribe the topic of its name
-- for other steps, subscribe the topics it follows
-- for all subscriptions, use its name as queue group name
+- each step has such a full name: `flow.$serviceName.$flowName.$stepName`
+- for the entry step, subscribe the topic of its full name
+- for other steps, subscribe the message of some step it follows
+- for all subscriptions, use its full name as queue group name
 - the topics a step emits are classified into 2 categories:
-  - `$name.ok(.*)?`
-  - `$name.failed(.*)?`
+  - `$fullName.ok(.*)?`
+  - `$fullName.failed(.*)?`
   
 ## API
 
@@ -21,9 +21,13 @@ Help build flow step messager.
 
 Options ~ {
   natsEx: NatsEx,
+  serviceName?: String,
   flowName: String,
   stepName: String,
-  follow?: String, // step message to follow, such as $otherStep.ok or $otherStep.failed,
+  follow?: {
+    step: String,
+    case: String,
+  },
   validator?: (data) => data,
   handler: Handler
 }
