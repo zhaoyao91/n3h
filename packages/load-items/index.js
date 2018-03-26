@@ -39,6 +39,6 @@ module.exports = function (options) {
 function buildItemName (dirname, filename, prefix = '') {
   const relativeFilename = path.relative(dirname, filename)
   const parsed = path.parse(relativeFilename)
-  const tokens = [...parsed.dir.split('/'), parsed.name]
+  const tokens = [...parsed.dir.split('/'), parsed.name].filter(x => !!x)
   return prefix + tokens.map(camelCase).join('/')
 }

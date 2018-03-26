@@ -1,6 +1,6 @@
 {
   "name": "n3h-load-items",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "load items with auto generated names.",
   "main": "index.js",
   "scripts": {
