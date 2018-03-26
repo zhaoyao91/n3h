@@ -25,7 +25,7 @@ const camelCase = require('lodash.camelcase')
 module.exports = function (options) {
   const {dirname, prefix} = options
   return readdir(dirname)
-    .filter(file => !file.includes('/lib/'))
+    .filter(file => !file.includes('/lib/') && !file.includes('/todo/') && !file.includes('/ignore/'))
     .map(file => {
       const itemDef = require(file)
       if (!itemDef.name) return {
