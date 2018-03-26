@@ -4,11 +4,11 @@ Help build action messager.
 
 ## Conventions for Action
 
-- each action has a name prefixed with 'action', such as `action.$action`
-- the topic of its name trigger the action
-- each action uses its name as queue group name
+- each action has such a full name: `action.$serviceName.$actionName`
+- the topic of its full name trigger the action
+- each action uses its full name as queue group name
 - action could return any result
-- action could emit side effect messages with the topic pattern `$name.$case`
+- action could emit side effect messages with the topic pattern `$fullName.$case`
 
 ## API
 
@@ -19,7 +19,8 @@ Help build action messager.
 
 Options ~ {
   natsEx: NatsEx,
-  name,
+  serviceName?: String,
+  actionName: String,
   validator?: (data) => data,
   handler: Handler
 }

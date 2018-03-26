@@ -3,7 +3,8 @@
 
 Options ~ {
   natsEx: NatsEx,
-  name,
+  serviceName?: String,
+  actionName: String,
   validator?: (data) => data,
   handler: Handler
 }
@@ -17,12 +18,13 @@ HandlerThis ~ {
 module.exports = function (options) {
   const {
     natsEx,
-    name,
+    serviceName,
+    actionName,
     validator,
     handler,
   } = options
 
-  const fullName = `action.${name}`
+  const fullName = ['action', serviceName, actionName].filter(x => !!x).join('.')
 
   const wrapperHandler = async (data, message, receivedTopic) => {
     const handlerThis = {

@@ -34,7 +34,8 @@ describe('action-builder', () => {
         need: 'natsEx',
         build: ({natsEx}) => buildAction({
           natsEx,
-          name: 'ping',
+          serviceName: 'test',
+          actionName: 'ping',
           handler () {
             return 'pong'
           }
@@ -44,7 +45,7 @@ describe('action-builder', () => {
         name: 'test',
         need: ['natsEx', 'action'],
         build: async ({natsEx}) => {
-          const result = await natsEx.call('action.ping')
+          const result = await natsEx.call('action.test.ping')
           expect(result).toBe('pong')
         }
       }
@@ -62,7 +63,7 @@ describe('action-builder', () => {
         build: ({natsEx}) => {
           buildAction({
             natsEx,
-            name: 'ping',
+            actionName: 'ping',
             handler () {
               expect(true).toBe(true)
             }
@@ -96,7 +97,7 @@ describe('action-builder', () => {
         need: 'natsEx',
         build: ({natsEx}) => buildAction({
           natsEx,
-          name: 'ping',
+          actionName: 'ping',
           handler () {
             this.emit('i-am-ok', 'well')
             return 'pong'
@@ -128,7 +129,7 @@ describe('action-builder', () => {
         need: 'natsEx',
         build: ({natsEx}) => buildAction({
           natsEx,
-          name: 'echo',
+          actionName: 'echo',
           handler (data) {
             expect(data).toBe(echoData)
             throw new Error('something wrong')
@@ -162,7 +163,7 @@ describe('action-builder', () => {
           need: 'natsEx',
           build: ({natsEx}) => buildAction({
             natsEx,
-            name: 'echo',
+            actionName: 'echo',
             validator,
             handler (data) {
               return data
@@ -189,7 +190,7 @@ describe('action-builder', () => {
           need: 'natsEx',
           build: ({natsEx}) => buildAction({
             natsEx,
-            name: 'echo',
+            actionName: 'echo',
             validator,
             handler (data) {
               return data
