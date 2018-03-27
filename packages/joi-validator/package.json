@@ -1,6 +1,6 @@
 {
   "name": "n3h-joi-validator",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "validate message data using joi",
   "main": "index.js",
   "keywords": [
@@ -13,5 +13,8 @@
   "license": "MIT",
   "peerDependencies": {
     "joi": "^13.0.0"
+  },
+  "dependencies": {
+    "lodash.defaults": "^4.2.0"
   }
 }

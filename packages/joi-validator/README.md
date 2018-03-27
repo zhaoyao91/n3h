@@ -29,6 +29,19 @@ const validator = buildValidator({
 })
 ```
 
+## API
+
+```
+(schema, Options?) => Validator
+
+Options ~ {
+  allowUnknown = true,
+  presense = 'required'
+} & see https://github.com/hapijs/joi/blob/v13.1.2/API.md#validatevalue-schema-options-callback
+
+Validator ~ (data) => data
+```
+
 ## License
 
 MIT
