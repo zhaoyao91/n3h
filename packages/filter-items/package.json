@@ -1,0 +1,19 @@
+{
+  "name": "n3h-filter-items",
+  "version": "1.0.0",
+  "description": "Help filter out item definitions",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [
+    "n3h",
+    "filter-items"
+  ],
+  "author": "zhaoyao91 <zhaoyao91@163.com>",
+  "repository": "https://github.com/zhaoyao91/n3h",
+  "devDependencies": {
+    "@types/jest": "^22.2.2",
+    "jest": "^22.4.3"
+  }
+}
