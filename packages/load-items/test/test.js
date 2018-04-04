@@ -3,7 +3,8 @@ const loadItems = require('../index')
 describe('loadItems', function () {
   it('should load items', () => {
     const items = loadItems({
-      dirname: __dirname + '/a'
+      dirname: __dirname + '/a',
+      filter: (file) => !file.includes('/lib/')
     })
     expect(items.length).toBe(2)
     expect(items.find(x => x.name === 'Alan')).toBeTruthy()
