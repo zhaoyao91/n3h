@@ -6,13 +6,15 @@ describe('filter', () => {
       {name: 'a'},
       {name: 'b'},
       {name: 'c'},
+      {name: 'd', need: 'a'}
     ]
 
-    const filtered = filter(all, ['a', 'c'])
+    const filtered = filter(all, ['c', 'd'])
 
     expect(filtered).toEqual([
+      {name: 'c'},
+      {name: 'd', need: 'a'},
       {name: 'a'},
-      {name: 'c'}
     ])
   })
 
