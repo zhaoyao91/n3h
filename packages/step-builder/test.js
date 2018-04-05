@@ -310,4 +310,44 @@ describe('step-builder', () => {
     ]
     await holder.load(itemDefs)
   })
+
+  test('validator in follow', async () => {
+    expect.assertions(2)
+    await holder.load([
+      natsExItem,
+      {
+        name: 'step',
+        need: 'natsEx',
+        build: ({natsEx}) => buildStep({
+          natsEx,
+          flowName: 'test-flow',
+          stepName: 'test-step',
+          follow: {
+            step: 'some-step',
+            case: 'ok',
+            validator: (data) => {
+              if (data === 'Bob') return data
+              else throw new TypeError('data is not Bob')
+            }
+          },
+          handler () {
+            this.emit('ok', 'Hello Bob')
+          }
+        })
+      }
+    ])
+    const natsEx = holder.getItem('natsEx')
+
+    natsEx.on('flow.test-flow.test-step.ok', (data) => {
+      expect(data).toBe('Hello Bob')
+    })
+
+    await natsEx.call('flow.test-flow.some-step.ok', 'Bob')
+
+    try {
+      await natsEx.call('flow.test-flow.some-step.ok', 'Alice')
+    } catch (err) {
+      expect(err.message).toBe('data is not Bob')
+    }
+  })
 })
