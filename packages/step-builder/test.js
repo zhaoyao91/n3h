@@ -161,7 +161,7 @@ describe('step-builder', () => {
   })
 
   test('emit all kinds of messages', async () => {
-    expect.assertions(4)
+    expect.assertions(5)
     const itemDefs = [
       natsExItem,
       {
@@ -176,6 +176,7 @@ describe('step-builder', () => {
             this.emit.okCase('well', 'ok well')
             this.emit.failed('failed')
             this.emit.failedCase('bad', 'failed bad')
+            this.emit('ping', 'ping')
           }
         })
       },
@@ -194,6 +195,9 @@ describe('step-builder', () => {
           })
           natsEx.on('flow.test-flow.test-step.failed.bad', (data) => {
             expect(data).toBe('failed bad')
+          })
+          natsEx.on('flow.test-flow.test-step.ping', (data) => {
+            expect(data).toBe('ping')
           })
           natsEx.emit('flow.test-flow.test-step')
         }

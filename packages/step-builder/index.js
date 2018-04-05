@@ -17,12 +17,7 @@ Options ~ {
 Handler ~ (data, message, receivedTopic): HandlerThis => Promise => Void
 
 HandlerThis ~ {
-  emit: {
-    ok: (data?) => messageId,
-    okCase: (case: String, data?) => messageId,
-    failed: (data?) => messageId,
-    failedCase: (case: String, data?) => messageId,
-  }
+  emit: (case, data?) => messageId
 }
  */
 module.exports = function (options) {
@@ -44,12 +39,17 @@ module.exports = function (options) {
 
   const wrapperHandler = async (data, message, receivedTopic) => {
     const handlerThis = {
-      emit: {
-        ok: (data) => message.emit(`${fullName}.ok`, data),
-        okCase: (_case, data) => message.emit(`${fullName}.ok.${_case}`, data),
-        failed: (data) => message.emit(`${fullName}.failed`, data),
-        failedCase: (_case, data) => message.emit(`${fullName}.failed.${_case}`, data),
-      }
+      emit: Object.assign(
+        (_case, data) => message.emit(`${fullName}.${_case}`, data),
+        /**
+         * @deprecated
+         */
+        {
+          ok: (data) => message.emit(`${fullName}.ok`, data),
+          okCase: (_case, data) => message.emit(`${fullName}.ok.${_case}`, data),
+          failed: (data) => message.emit(`${fullName}.failed`, data),
+          failedCase: (_case, data) => message.emit(`${fullName}.failed.${_case}`, data),
+        })
     }
     data = validator ? validator(data) : data
     await handler.call(handlerThis, data, message, receivedTopic)

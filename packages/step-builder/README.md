@@ -8,10 +8,8 @@ Help build flow step messager.
 - for the entry step, subscribe the topic of its full name
 - for other steps, subscribe the message of some step it follows
 - for all subscriptions, use its full name as queue group name
-- the topics a step emits are classified into 2 categories:
-  - `$fullName.ok(.*)?`
-  - `$fullName.failed(.*)?`
-  
+- a step may emit different messages based on its inner logic. the pattern of the topics of these message is `$fullName.$case`
+
 ## API
 
 ### buildStep
@@ -35,12 +33,7 @@ Options ~ {
 Handler ~ (data, message, receivedTopic): HandlerThis => Promise => Void
 
 HandlerThis ~ {
-  emit: {
-    ok: (data?) => messageId,
-    okCase: (case: String, data?) => messageId,
-    failed: (data?) => messageId,
-    failedCase: (case: String, data?) => messageId,
-  }
+  emit: (case, data?) => messageId
 }
 ```
 
