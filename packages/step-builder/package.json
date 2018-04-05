@@ -1,6 +1,6 @@
 {
   "name": "n3h-step-builder",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Help build flow step messager.",
   "main": "index.js",
   "scripts": {
@@ -22,6 +22,9 @@
     "jest": "^22.4.3",
     "nats-ex": "^1.0.0",
     "sleep-promise": "^2.0.0",
-    "the-holder": "^1.0.0"
+    "the-holder": "^1.1.0"
+  },
+  "dependencies": {
+    "ensure-array": "^1.0.0"
   }
 }

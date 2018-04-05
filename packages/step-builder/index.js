@@ -6,12 +6,14 @@ Options ~ {
   serviceName?: String,
   flowName: String,
   stepName: String,
-  follow?: {
-    step: String,
-    case: String,
-  },
+  follow?: FollowOptions | FollowOptions[],
   validator?: (data) => data,
   handler: Handler
+}
+
+FollowOptions ~ {
+  step: String,
+  case: String,
 }
 
 Handler ~ (data, message, receivedTopic): HandlerThis => Promise => Void
@@ -20,6 +22,9 @@ HandlerThis ~ {
   emit: (case, data?) => messageId
 }
  */
+
+const ensureArray = require('ensure-array')
+
 module.exports = function (options) {
   const {
     natsEx,
@@ -33,9 +38,9 @@ module.exports = function (options) {
 
   const fullName = ['flow', serviceName, flowName, stepName].filter(x => !!x).join('.')
 
-  const topic = follow
-    ? ['flow', serviceName, flowName, follow.step, follow.case].filter(x => !!x).join('.')
-    : fullName
+  const topics = follow
+    ? ensureArray(follow).map(follow => ['flow', serviceName, flowName, follow.step, follow.case].filter(x => !!x).join('.'))
+    : [fullName]
 
   const wrapperHandler = async (data, message, receivedTopic) => {
     const handlerThis = {
@@ -55,5 +60,5 @@ module.exports = function (options) {
     await handler.call(handlerThis, data, message, receivedTopic)
   }
 
-  natsEx.on(topic, wrapperHandler, {queue: fullName})
+  topics.forEach(topic => natsEx.on(topic, wrapperHandler, {queue: fullName}))
 }

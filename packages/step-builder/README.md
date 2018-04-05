@@ -22,12 +22,14 @@ Options ~ {
   serviceName?: String,
   flowName: String,
   stepName: String,
-  follow?: {
-    step: String,
-    case: String,
-  },
+  follow?: FollowOptions | FollowOptions[],
   validator?: (data) => data,
   handler: Handler
+}
+
+FollowOptions ~ {
+  step: String,
+  case: String,
 }
 
 Handler ~ (data, message, receivedTopic): HandlerThis => Promise => Void

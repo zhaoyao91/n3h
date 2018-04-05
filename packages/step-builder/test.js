@@ -90,6 +90,45 @@ describe('step-builder', () => {
     holder.load(itemDefs)
   })
 
+  test('follow many', async () => {
+    expect.assertions(2)
+    await holder.load([
+      natsExItem,
+      {
+        name: 'step',
+        need: 'natsEx',
+        build: ({natsEx}) => buildStep({
+          natsEx,
+          flowName: 'test-flow',
+          stepName: 'test-step',
+          follow: [
+            {
+              step: 'some-step',
+              case: 'ok'
+            },
+            {
+              step: 'other-step',
+              case: 'ok'
+            }
+          ],
+          handler () {
+            this.emit('ok', 'Hello World')
+          }
+        })
+      }
+    ])
+    const natsEx = holder.getItem('natsEx')
+
+    natsEx.on('flow.test-flow.test-step.ok', (data) => {
+      expect(data).toBe('Hello World')
+    })
+
+    natsEx.emit('flow.test-flow.some-step.ok')
+    natsEx.emit('flow.test-flow.other-step.ok')
+
+    await sleep(10)
+  })
+
   describe('option.validator', () => {
     const testValidator = (data) => {
       if (typeof data !== 'string') {
