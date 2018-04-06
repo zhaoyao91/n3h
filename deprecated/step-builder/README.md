@@ -2,6 +2,10 @@
 
 Help build flow step messager.
 
+## Deprecation
+
+This package is only for `the-holder v1`, so it's deprecated now.
+
 ## Conventions for Flow Step
 
 - each step has such a full name: `flow.$serviceName.$flowName.$stepName`

@@ -2,6 +2,10 @@
 
 Help build action messager.
 
+## Deprecation
+
+This package is only for `the-holder v1`, so it's deprecated now.
+
 ## Conventions for Action
 
 - each action has such a full name: `action.$serviceName.$actionName`

@@ -2,6 +2,10 @@
 
 Help build mapper messager.
 
+## Deprecation
+
+This package is only for `the-holder v1`, so it's deprecated now.
+
 ## Conventions for Mapper
 
 - each mapper has a name prefixed with 'mapper', such as `mapper.$mapper`
