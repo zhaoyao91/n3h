@@ -8,6 +8,7 @@ Options ~ {
   stepName: String,
   follow?: FollowOptions | FollowOptions[],
   validator?: (data) => data, // if follow.$.validator is not provided, this validator will be used
+  emitCases: {name: String => case: String}
   handler: Handler
 }
 
@@ -20,11 +21,15 @@ FollowOptions ~ {
 Handler ~ (data, message, receivedTopic): HandlerThis => Promise => Void
 
 HandlerThis ~ {
-  emit: (case, data?) => messageId
+  // corresponding to emitCases
+  emit: {
+    name: String => (case, data?) => messageId
+  }
 }
  */
 
 const ensureArray = require('ensure-array')
+const mapValues = require('lodash.mapvalues')
 
 module.exports = function (options) {
   const {
@@ -34,6 +39,7 @@ module.exports = function (options) {
     stepName,
     follow,
     validator,
+    emitCases,
     handler,
   } = options
 
@@ -49,17 +55,7 @@ module.exports = function (options) {
   defs.forEach(([topic, validator]) => {
     const wrapperHandler = async (data, message, receivedTopic) => {
       const handlerThis = {
-        emit: Object.assign(
-          (_case, data) => message.emit(`${fullName}.${_case}`, data),
-          /**
-           * @deprecated
-           */
-          {
-            ok: (data) => message.emit(`${fullName}.ok`, data),
-            okCase: (_case, data) => message.emit(`${fullName}.ok.${_case}`, data),
-            failed: (data) => message.emit(`${fullName}.failed`, data),
-            failedCase: (_case, data) => message.emit(`${fullName}.failed.${_case}`, data),
-          })
+        emit: mapValues(emitCases, (_case) => (data) => message.emit(`${fullName}.${_case}`, data))
       }
       data = validator ? validator(data) : data
       await handler.call(handlerThis, data, message, receivedTopic)

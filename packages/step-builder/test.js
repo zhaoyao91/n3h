@@ -25,8 +25,9 @@ describe('step-builder', () => {
     await holder.close()
   })
 
-  test('basic step', (done) => {
-    const itemDefs = [
+  test('basic step', async () => {
+    expect.assertions(1)
+    await holder.load([
       natsExItem,
       {
         name: 'step',
@@ -36,28 +37,23 @@ describe('step-builder', () => {
           serviceName: 'test',
           flowName: 'flow',
           stepName: 'step',
+          emitCases: {ok: 'ok'},
           handler () {
             this.emit.ok('Hello World')
           }
         })
-      },
-      {
-        name: 'test',
-        need: ['natsEx', 'step'],
-        build: async ({natsEx}) => {
-          natsEx.on('flow.test.flow.step.ok', (data) => {
-            expect(data).toBe('Hello World')
-            done()
-          })
-          natsEx.emit('flow.test.flow.step')
-        }
       }
-    ]
-    holder.load(itemDefs)
+    ])
+    const natsEx = holder.getItem('natsEx')
+    natsEx.on('flow.test.flow.step.ok', (data) => {
+      expect(data).toBe('Hello World')
+    })
+    await natsEx.call('flow.test.flow.step')
   })
 
-  test('option.follow', (done) => {
-    const itemDefs = [
+  test('option.follow', async () => {
+    expect.assertions(1)
+    await holder.load([
       natsExItem,
       {
         name: 'step',
@@ -70,24 +66,18 @@ describe('step-builder', () => {
             step: 'some-step',
             case: 'ok'
           },
+          emitCases: {ok: 'ok'},
           handler () {
             this.emit.ok('Hello World')
           }
         })
-      },
-      {
-        name: 'test',
-        need: ['natsEx', 'step'],
-        build: async ({natsEx}) => {
-          natsEx.on('flow.test-flow.test-step.ok', (data) => {
-            expect(data).toBe('Hello World')
-            done()
-          })
-          natsEx.emit('flow.test-flow.some-step.ok')
-        }
       }
-    ]
-    holder.load(itemDefs)
+    ])
+    const natsEx = holder.getItem('natsEx')
+    natsEx.on('flow.test-flow.test-step.ok', (data) => {
+      expect(data).toBe('Hello World')
+    })
+    await natsEx.call('flow.test-flow.some-step.ok')
   })
 
   test('follow many', async () => {
@@ -111,8 +101,11 @@ describe('step-builder', () => {
               case: 'ok'
             }
           ],
+          emitCases: {
+            ok: 'ok'
+          },
           handler () {
-            this.emit('ok', 'Hello World')
+            this.emit.ok('Hello World')
           }
         })
       }
@@ -129,7 +122,9 @@ describe('step-builder', () => {
     await sleep(10)
   })
 
-  describe('option.validator', () => {
+  test('validation', async () => {
+    expect.assertions(2)
+
     const testValidator = (data) => {
       if (typeof data !== 'string') {
         throw new TypeError('invalid data')
@@ -137,71 +132,7 @@ describe('step-builder', () => {
       return Number(data)
     }
 
-    test('validation ok', (done) => {
-      const itemDefs = [
-        natsExItem,
-        {
-          name: 'step',
-          need: 'natsEx',
-          build: ({natsEx}) => buildStep({
-            natsEx,
-            flowName: 'test-flow',
-            stepName: 'test-step',
-            validator: testValidator,
-            handler (data) {
-              expect(typeof data).toBe('number')
-              done()
-            }
-          })
-        },
-        {
-          name: 'test',
-          need: ['natsEx', 'step'],
-          build: ({natsEx}) => {
-            natsEx.emit('flow.test-flow.test-step', '100')
-          }
-        }
-      ]
-      holder.load(itemDefs)
-    })
-
-    test('validation failed', async () => {
-      expect.assertions(1)
-      const itemDefs = [
-        natsExItem,
-        {
-          name: 'step',
-          need: 'natsEx',
-          build: ({natsEx}) => buildStep({
-            natsEx,
-            flowName: 'test-flow',
-            stepName: 'test-step',
-            validator: testValidator,
-            handler (data) {
-              return data
-            }
-          })
-        },
-        {
-          name: 'test',
-          need: ['natsEx', 'step'],
-          build: async ({natsEx}) => {
-            try {
-              await natsEx.call('flow.test-flow.test-step', 100)
-            }
-            catch (err) {
-              expect(err.message).toBe('invalid data')
-            }
-          }
-        }
-      ]
-      await holder.load(itemDefs)
-    })
-  })
-
-  test('emit all kinds of messages', async () => {
-    expect.assertions(5)
-    const itemDefs = [
+    await holder.load([
       natsExItem,
       {
         name: 'step',
@@ -210,40 +141,22 @@ describe('step-builder', () => {
           natsEx,
           flowName: 'test-flow',
           stepName: 'test-step',
-          handler () {
-            this.emit.ok('ok')
-            this.emit.okCase('well', 'ok well')
-            this.emit.failed('failed')
-            this.emit.failedCase('bad', 'failed bad')
-            this.emit('ping', 'ping')
+          validator: testValidator,
+          handler (data) {
+            expect(typeof data).toBe('number')
           }
         })
-      },
-      {
-        name: 'test',
-        need: ['natsEx', 'step'],
-        build: async ({natsEx}) => {
-          natsEx.on('flow.test-flow.test-step.ok', (data) => {
-            expect(data).toBe('ok')
-          })
-          natsEx.on('flow.test-flow.test-step.ok.well', (data) => {
-            expect(data).toBe('ok well')
-          })
-          natsEx.on('flow.test-flow.test-step.failed', (data) => {
-            expect(data).toBe('failed')
-          })
-          natsEx.on('flow.test-flow.test-step.failed.bad', (data) => {
-            expect(data).toBe('failed bad')
-          })
-          natsEx.on('flow.test-flow.test-step.ping', (data) => {
-            expect(data).toBe('ping')
-          })
-          natsEx.emit('flow.test-flow.test-step')
-        }
       }
-    ]
-    await holder.load(itemDefs)
-    await sleep(50)
+    ])
+    const natsEx = holder.getItem('natsEx')
+
+    await natsEx.call('flow.test-flow.test-step', '100')
+
+    try {
+      await natsEx.call('flow.test-flow.test-step', 100)
+    } catch (err) {
+      expect(err.message).toBe('invalid data')
+    }
   })
 
   test('queue group', async () => {
@@ -251,7 +164,7 @@ describe('step-builder', () => {
       a: 0,
       b: 0,
     }
-    const itemDefs = [
+    await holder.load([
       natsExItem,
       {
         name: 'step',
@@ -294,21 +207,14 @@ describe('step-builder', () => {
             }
           })
         }
-      },
-      {
-        name: 'test',
-        need: ['natsEx', 'step'],
-        build: async ({natsEx}) => {
-          natsEx.emit('flow.test-flow.some-step.ok')
-          await sleep(10)
-          expect(count).toEqual({
-            a: 1,
-            b: 1,
-          })
-        }
       }
-    ]
-    await holder.load(itemDefs)
+    ])
+    const natsEx = holder.getItem('natsEx')
+    await natsEx.call('flow.test-flow.some-step.ok')
+    expect(count).toEqual({
+      a: 1,
+      b: 1,
+    })
   })
 
   test('validator in follow', async () => {
@@ -330,8 +236,11 @@ describe('step-builder', () => {
               else throw new TypeError('data is not Bob')
             }
           },
+          emitCases: {
+            ok: 'ok'
+          },
           handler () {
-            this.emit('ok', 'Hello Bob')
+            this.emit.ok('Hello Bob')
           }
         })
       }
@@ -349,5 +258,34 @@ describe('step-builder', () => {
     } catch (err) {
       expect(err.message).toBe('data is not Bob')
     }
+  })
+
+  test('option.emitCases', async () => {
+    expect.assertions(1)
+    await holder.load([
+      natsExItem,
+      {
+        name: 'step',
+        need: 'natsEx',
+        build: ({natsEx}) => buildStep({
+          natsEx,
+          flowName: 'test-flow',
+          stepName: 'test-step',
+          emitCases: {
+            ok: 'i-am-ok'
+          },
+          handler () {
+            this.emit.ok('Hello')
+          }
+        })
+      }
+    ])
+    const natsEx = holder.getItem('natsEx')
+
+    natsEx.on('flow.test-flow.test-step.i-am-ok', (data) => {
+      expect(data).toBe('Hello')
+    })
+
+    await natsEx.call('flow.test-flow.test-step')
   })
 })

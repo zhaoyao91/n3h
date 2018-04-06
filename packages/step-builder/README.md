@@ -23,19 +23,24 @@ Options ~ {
   flowName: String,
   stepName: String,
   follow?: FollowOptions | FollowOptions[],
-  validator?: (data) => data,
+  validator?: (data) => data, // if follow.$.validator is not provided, this validator will be used
+  emitCases: {name: String => case: String}
   handler: Handler
 }
 
 FollowOptions ~ {
   step: String,
   case: String,
+  validator?: (data) => data
 }
 
 Handler ~ (data, message, receivedTopic): HandlerThis => Promise => Void
 
 HandlerThis ~ {
-  emit: (case, data?) => messageId
+  // corresponding to emitCases
+  emit: {
+    name: String => (case, data?) => messageId
+  }
 }
 ```
 
