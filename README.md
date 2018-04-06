@@ -1,10 +1,10 @@
-# N3H Architecture
+# N3H Stack
 
-Tools for N3H architecture.
+Tools for N3H stack.
 
 See [packages](./packages).
 
-## Based on
+## Stack
 
 - [NN Architecture](https://www.jianshu.com/p/5fd17296c97f)
 - [NATS-EX v1](https://github.com/zhaoyao91/nats-ex/tree/master/packages/nats-ex)
