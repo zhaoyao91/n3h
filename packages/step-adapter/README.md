@@ -4,7 +4,7 @@ Adapt flow step messager item definition into standard item definition.
 
 ## Conventions for Flow Step
 
-- each step has such a full name: `flow.$serviceName.$flowName.$stepName`
+- each step has such a full name: `step.$serviceName.$flowName.$stepName`
 - for the entry step, subscribe the topic of its full name
 - for other steps, subscribe the message of some step it follows
 - for all subscriptions, use its full name as queue group name
