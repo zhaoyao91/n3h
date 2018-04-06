@@ -1,6 +1,6 @@
 {
   "name": "n3h-step-builder",
-  "version": "1.3.0",
+  "version": "2.0.0",
   "description": "Help build flow step messager.",
   "main": "index.js",
   "scripts": {
