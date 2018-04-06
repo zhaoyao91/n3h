@@ -1,5 +1,7 @@
 /*
-(Options) => Void
+(Options) => ItemPack
+
+ItemPack ~ see https://github.com/zhaoyao91/the-holder#load
 
 Options ~ {
   natsEx: NatsEx,
@@ -62,4 +64,8 @@ module.exports = function (options) {
     }
     natsEx.on(topic, wrapperHandler, {queue: fullName})
   })
+
+  return {
+    item: options
+  }
 }

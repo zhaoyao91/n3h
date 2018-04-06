@@ -15,7 +15,9 @@ Help build flow step messager.
 ### buildStep
 
 ```
-(Options) => Void
+(Options) => ItemPack
+
+ItemPack ~ see https://github.com/zhaoyao91/the-holder#load
 
 Options ~ {
   natsEx: NatsEx,

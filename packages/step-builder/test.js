@@ -288,4 +288,29 @@ describe('step-builder', () => {
 
     await natsEx.call('flow.test-flow.test-step')
   })
+
+  test('return item pack', async () => {
+    await holder.load([
+      natsExItem,
+      {
+        name: 'step',
+        need: 'natsEx',
+        build: ({natsEx}) => buildStep({
+          natsEx,
+          serviceName: 'test',
+          flowName: 'flow',
+          stepName: 'step',
+          emitCases: {ok: 'ok'},
+          handler () {
+            this.emit.ok('Hello World')
+          }
+        })
+      }
+    ])
+    const step = holder.getItem('step')
+
+    expect(step.serviceName).toBe('test')
+    expect(step.flowName).toBe('flow')
+    expect(step.stepName).toBe('step')
+  })
 })
