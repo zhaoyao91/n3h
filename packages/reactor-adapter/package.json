@@ -1,0 +1,34 @@
+{
+  "name": "n3h-reactor-adapter",
+  "version": "1.0.0",
+  "description": "Adapt reactor messager item definition into standard item definition.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "doc": "jsdoc2md index.js > api.md"
+  },
+  "keywords": [
+    "n3h",
+    "reactor-adapter"
+  ],
+  "author": "zhaoyao91 <zhaoyao91@163.com>",
+  "repository": "https://github.com/zhaoyao91/n3h",
+  "license": "MIT",
+  "peerDependencies": {
+    "nats-ex": "^1.0.0",
+    "the-holder": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^22.2.2",
+    "jest": "^22.4.3",
+    "joi": "^13.1.2",
+    "jsdoc-to-markdown": "^4.0.1",
+    "n3h-joi-validator": "^1.0.0",
+    "nats-ex": "^1.0.0",
+    "sleep-promise": "^2.0.0",
+    "the-holder": "^2.0.0"
+  },
+  "dependencies": {
+    "lodash.mapvalues": "^4.6.0"
+  }
+}
