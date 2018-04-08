@@ -158,33 +158,4 @@ describe('action-builder', () => {
       expect(err.message).toBe('"value" must be a string')
     }
   })
-
-  test('map items', async () => {
-    await holder.load([
-        natsExItem,
-        {
-          type: 'action',
-          name: 'whatever',
-          need: ['natsEx'],
-          serviceName: 'test',
-          actionName: 'ping',
-          mapItems: (items) => {
-            expect(typeof items.natsEx).toBe('object')
-            return {
-              ...items,
-              magic: 'boom'
-            }
-          },
-          handler () {
-            expect(this.items.magic).toBe('boom')
-            return 'pong'
-          }
-        }
-      ]
-    )
-    const natsEx = holder.getItem('natsEx')
-
-    const result = await natsEx.call('action.test.ping')
-    expect(result).toBe('pong')
-  })
 })

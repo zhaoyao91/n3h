@@ -14,6 +14,11 @@
  */
 
 /**
+ * the final definition for this item
+ * @typedef {object} adapt~Handler#definition
+ */
+
+/**
  * items built before this item
  * @typedef {object} adapt~Handler#items
  */
@@ -34,7 +39,6 @@ const mapValues = require('lodash.mapvalues')
  * @param {function} [definition.validator] - (data) => data, or throw validation error
  * @param {adapt~Handler} definition.handler
  * @param {object} [definition.emitCases] - key is case in js, value is case in message topic
- * @param {function} [definition.mapItems] - (items) => items
  * @return {external:StandardItemDefinition}
  */
 function adapt (definition) {
@@ -44,17 +48,16 @@ function adapt (definition) {
     validator,
     handler,
     emitCases,
-    mapItems
   } = definition
 
   return {
     ...definition,
     build: (items, definition) => {
-      items = mapItems ? mapItems(items, definition) : items
       const {natsEx} = items // yes, natsEx is required
       const fullName = ['action', serviceName, actionName].filter(x => !!x).join('.')
       const wrapperHandler = async (data, message, receivedTopic) => {
         const handlerThis = {
+          definition: definition,
           items: items,
           emit: mapValues(emitCases, (_case) => (data) => message.emit(`${fullName}.${_case}`, data))
         }
