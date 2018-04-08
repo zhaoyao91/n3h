@@ -277,32 +277,4 @@ describe('step-builder', () => {
 
     await natsEx.call('step.test-flow.test-step')
   })
-
-  test('map items', async () => {
-    await holder.load([
-        natsExItem,
-        {
-          type: 'step',
-          name: 'whatever',
-          need: ['natsEx'],
-          serviceName: 'test',
-          flowName: 'test-flow',
-          stepName: 'test-step',
-          mapItems: (items) => {
-            expect(typeof items.natsEx).toBe('object')
-            return {
-              ...items,
-              magic: 'boom'
-            }
-          },
-          handler () {
-            expect(this.items.magic).toBe('boom')
-          }
-        }
-      ]
-    )
-    const natsEx = holder.getItem('natsEx')
-
-    await natsEx.call('step.test.test-flow.test-step')
-  })
 })
