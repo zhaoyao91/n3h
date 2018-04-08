@@ -158,4 +158,43 @@ describe('reactor-builder', () => {
       expect(err.message).toBe('"value" must be a string')
     }
   })
+
+  test('on many', async () => {
+    expect.assertions(4)
+    await holder.load([
+      natsExItem,
+      {
+        type: 'reactor',
+        name: 'whatever',
+        need: ['natsEx'],
+        serviceName: 'test',
+        reactorName: 'hello',
+        on: [
+          'ping',
+          {topic: 'pong'},
+          {
+            topic: 'boom',
+            validator: (data) => {
+              if (data === 'boom') throw new TypeError('Boom!')
+              return data
+            }
+          }
+        ],
+        handler (data) {
+          return data
+        }
+      }
+    ])
+    const natsEx = holder.getItem('natsEx')
+
+    expect(await natsEx.call('ping', 'ping')).toBe('ping')
+    expect(await natsEx.call('pong', 'pong')).toBe('pong')
+    expect(await natsEx.call('boom', 'well')).toBe('well')
+
+    try {
+      await natsEx.call('boom', 'boom')
+    } catch (err) {
+      expect(err.message).toBe('Boom!')
+    }
+  })
 })

@@ -30,13 +30,20 @@
  * @typedef {object} adapt~Handler#emit
  */
 
+/**
+ * @typedef {string | object} adapt~onOption
+ * @property {string} topic
+ * @property {function} [validator] - the same as validator in definition
+ */
+
 const mapValues = require('lodash.mapvalues')
+const {inspect} = require('util')
 
 /**
  * @param {object} definition
  * @param {string} definition.serviceName
  * @param {string} definition.reactorName
- * @param {string} definition.on - message topic to listen
+ * @param {adapt~onOption | adapt~onOption[]} definition.on - define what message to listen
  * @param {function} [definition.validator] - (data) => data, or throw validation error
  * @param {adapt~Handler} definition.handler
  * @param {object} [definition.emitCases] - key is case in js, value is case in message topic
@@ -58,19 +65,33 @@ function adapt (definition) {
     build: (items, definition) => {
       const {natsEx} = items // yes, natsEx is required
       const fullName = ['reactor', serviceName, reactorName].filter(x => !!x).join('.')
-      const wrapperHandler = async (data, message, receivedTopic) => {
-        const handlerThis = {
-          definition: definition,
-          items: items,
-          emit: mapValues(emitCases, (_case) => (data) => message.emit(`${fullName}.${_case}`, data))
-        }
-        data = validator ? validator(data) : data
-        return handler.call(handlerThis, data, message, receivedTopic)
-      }
 
-      natsEx.on(on, wrapperHandler, {queue: fullName})
+      adaptOn(on).forEach(x => {
+        const wrapperHandler = async (data, message, receivedTopic) => {
+          const handlerThis = {
+            definition: definition,
+            items: items,
+            emit: mapValues(emitCases, (_case) => (data) => message.emit(`${fullName}.${_case}`, data))
+          }
+          data = x.validator
+            ? x.validator(data)
+            : validator
+              ? validator(data)
+              : data
+          return handler.call(handlerThis, data, message, receivedTopic)
+        }
+
+        natsEx.on(x.topic, wrapperHandler, {queue: fullName})
+      })
     }
   }
 }
 
 module.exports = adapt
+
+function adaptOn (on) {
+  if (typeof on === 'string') return [{topic: on}]
+  else if (Array.isArray(on)) return on.map(x => typeof x === 'string' ? {topic: x} : x)
+  else if (typeof on === 'object') return [on]
+  throw new TypeError(`invalid on option: ${inspect(on)}`)
+}

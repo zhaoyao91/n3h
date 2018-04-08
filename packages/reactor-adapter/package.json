@@ -1,6 +1,6 @@
 {
   "name": "n3h-reactor-adapter",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Adapt reactor messager item definition into standard item definition.",
   "main": "index.js",
   "scripts": {
