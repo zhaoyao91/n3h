@@ -1,7 +1,6 @@
 function filter (xs, names) {
   const namesSet = new Set()
   names.forEach(name => addName(xs, namesSet, name))
-  console.log(namesSet)
   return Array.from(namesSet).map(name => xs.find(x => x.name === name))
 }
 
